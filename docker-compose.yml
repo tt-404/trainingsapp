@@ -1,6 +1,8 @@
 services:
-  trainingsplan:
-    image: ghcr.io/tt-404/trainingsapp:latest
+  trainingsapp:
+    build:
+      context: .
+      dockerfile: Containerfile
     ports:
       - "8080:80"
     restart: unless-stopped
