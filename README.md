@@ -2,44 +2,43 @@
 
 Webapp für den 20-Wochen Trainingsplan Oberrieden → Gotthard.
 
-## Voraussetzungen
+## Deployment (Raspberry Pi)
 
-- Podman installiert (`brew install podman` auf Mac oder `apt install podman` auf Linux)
-
-## Starten
+Jeder Push auf `main` deployt automatisch via GitHub Actions (self-hosted Runner).
 
 ```bash
-# 1. Image bauen
-podman build -t trainingsplan .
+# Manuell neu bauen und starten
+podman compose up --build -d
 
-# 2. Container starten
-podman run -d --name trainingsplan -p 8080:80 trainingsplan
+# Logs anzeigen
+podman compose logs -f
 
-# 3. Browser öffnen
-open http://localhost:8080
+# Stoppen
+podman compose down
 ```
 
-## Stoppen / Neu starten
+## Lokale Entwicklung
 
 ```bash
-# Stoppen
-podman stop trainingsplan
-
-# Wieder starten
-podman start trainingsplan
-
-# Neu bauen nach Änderungen
-podman stop trainingsplan
-podman rm trainingsplan
+# Image bauen
 podman build -t trainingsplan .
+
+# Container starten
 podman run -d --name trainingsplan -p 8080:80 trainingsplan
+
+# Browser öffnen
+open http://localhost:8080
+
+# Stoppen
+podman stop trainingsplan && podman rm trainingsplan
 ```
 
 ## Struktur
 
 ```
-trainingsplan-app/
-├── Containerfile       ← Podman Build-Datei
+trainingsapp/
+├── Containerfile       ← Podman Build-Datei (Nginx Alpine)
+├── docker-compose.yml  ← Compose-Konfiguration (Port 8080)
 ├── README.md           ← Diese Datei
 └── app/
     └── index.html      ← Komplette Webapp (single file)
@@ -56,4 +55,4 @@ Dort kannst du neue Trainings nach diesem Schema hinzufügen:
   note:'Erste 1000-Hm-Runde!' },
 ```
 
-Nach Änderungen Container neu bauen (siehe oben).
+Nach Änderungen einfach pushen — der Pi deployt automatisch.
