@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trainingsplan – Gotthard 2025</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0e;
+    --bg2: #171714;
+    --bg3: #1e1e1a;
+    --border: #2a2a26;
+    --text: #e8e6df;
+    --text2: #8a8880;
+    --text3: #555450;
+    --green: #7ab648;
+    --green-dim: #3a5a1f;
+    --blue: #4a9fd4;
+    --blue-dim: #1a3d54;
+    --orange: #d4834a;
+    --orange-dim: #4a2e16;
+    --red: #c4553a;
+    --red-dim: #421a10;
+    --gray: #6a6860;
+    --gray-dim: #252520;
+    --gold: #c4a93a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .header-left h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -.02em;
+    line-height: 1.1;
+  }
+  .header-left h1 span { color: var(--green); }
+  .header-left p {
+    color: var(--text2);
+    font-size: 11px;
+    margin-top: 4px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .header-right {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .stat-pill {
+    text-align: right;
+  }
+  .stat-pill .val {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--green);
+    line-height: 1;
+  }
+  .stat-pill .lbl {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar {
+    padding: .75rem 2rem;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .prog-label { font-size: 11px; color: var(--text2); white-space: nowrap; }
+  .prog-track {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+    transition: width .6s ease;
+  }
+  .prog-pct { font-size: 11px; color: var(--green); white-space: nowrap; }
+
+  /* LAYOUT */
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-section {
+    padding: 0 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .sidebar-section-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    padding: .5rem 1.25rem;
+    margin-bottom: .25rem;
+  }
+  .week-btn {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    width: 100%;
+    padding: .5rem 1.25rem;
+    background: none;
+    border: none;
+    color: var(--text2);
+    cursor: pointer;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    border-radius: 4px;
+    transition: all .15s;
+  }
+  .week-btn:hover { background: var(--bg3); color: var(--text); }
+  .week-btn.active { background: var(--bg3); color: var(--text); }
+  .week-btn.current { color: var(--blue); }
+  .week-btn.done { color: var(--green); }
+  .week-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .week-btn-meta { margin-left: auto; font-size: 10px; color: var(--text3); }
+
+  /* ZONE LEGEND */
+  .zone-legend {
+    padding: .75rem 1.25rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+  .zone-legend-title { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .6rem; }
+  .zone-row { display: flex; align-items: center; gap: .5rem; padding: .2rem 0; font-size: 11px; }
+  .zone-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .zone-range { color: var(--text2); margin-left: auto; }
+
+  /* MAIN */
+  .main {
+    padding: 2rem;
+    overflow-y: auto;
+  }
+
+  /* WEEK CARD */
+  .week-card { display: none; }
+  .week-card.active { display: block; }
+
+  .week-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .week-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .week-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .week-meta {
+    font-size: 11px;
+    color: var(--text2);
+    margin-top: 4px;
+  }
+  .week-badges { display: flex; gap: .5rem; flex-wrap: wrap; align-items: flex-start; }
+  .badge {
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .badge-green { background: var(--green-dim); color: var(--green); }
+  .badge-blue { background: var(--blue-dim); color: var(--blue); }
+  .badge-orange { background: var(--orange-dim); color: var(--orange); }
+  .badge-red { background: var(--red-dim); color: var(--red); }
+  .badge-gray { background: var(--gray-dim); color: var(--gray); }
+  .badge-gold { background: #2a2208; color: var(--gold); }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .75rem 1rem;
+  }
+  .stat-box-val {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-box-lbl {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-top: 3px;
+  }
+
+  /* DAY SCHEDULE */
+  .schedule { display: flex; flex-direction: column; gap: .5rem; margin-bottom: 1.5rem; }
+  .day-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 1rem;
+    align-items: start;
+    padding: .75rem 1rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color .15s;
+  }
+  .day-row:hover { border-color: var(--text3); }
+  .day-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text2);
+    padding-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .day-content { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .day-tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 3px;
+    margin-right: 5px;
+    margin-bottom: 2px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+
+  /* TIP BOX */
+  .tip-box {
+    background: var(--blue-dim);
+    border: 1px solid #1f4d6e;
+    border-radius: 6px;
+    padding: .75rem 1rem;
+    font-size: 12px;
+    color: #7bc4e8;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  .tip-box::before { content: '// '; color: var(--blue); }
+
+  /* PASS INFO */
+  .pass-box {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  .pass-name {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: .5rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+  .pass-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .pass-stat { font-size: 11px; color: var(--text2); }
+  .pass-stat span { color: var(--text); font-weight: 500; }
+  .pass-bar-wrap { margin-top: .6rem; }
+  .pass-bar-bg { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .pass-bar-fill { height: 100%; border-radius: 2px; }
+
+  /* ACTIVITIES LOG */
+  .act-section { margin-top: 2rem; }
+  .act-title {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: .75rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .act-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .75rem 1rem;
+    margin-bottom: .5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: .5rem;
+    align-items: start;
+  }
+  .act-name { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .act-meta { font-size: 11px; color: var(--text3); }
+  .act-stats-row { display: flex; gap: .75rem; margin-top: .4rem; flex-wrap: wrap; }
+  .act-stat { font-size: 11px; color: var(--text2); }
+  .act-stat b { color: var(--text); }
+  .zbar { display: flex; height: 4px; border-radius: 2px; overflow: hidden; width: 120px; margin-top: .4rem; }
+  .act-badge { font-size: 10px; padding: 2px 8px; border-radius: 3px; }
+
+  /* OVERVIEW TAB */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: .5rem;
+    margin-bottom: 1.5rem;
+  }
+  .phase-group { margin-bottom: 1.5rem; }
+  .phase-group-label {
+    font-size: 10px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: .5rem;
+    padding-bottom: .3rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .mini-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .6rem .75rem;
+    cursor: pointer;
+    transition: border-color .15s;
+  }
+  .mini-card:hover { border-color: var(--text3); }
+  .mini-card.current { border-color: var(--blue); }
+  .mini-card.done { border-color: var(--green-dim); background: #0f1a0a; }
+  .mini-wnum { font-size: 10px; color: var(--text3); margin-bottom: 2px; }
+  .mini-dates { font-size: 10px; color: var(--text3); margin-bottom: 4px; }
+  .mini-bar-bg { height: 2px; background: var(--border); border-radius: 1px; overflow: hidden; margin-bottom: 4px; }
+  .mini-bar { height: 100%; border-radius: 1px; }
+  .mini-h { font-size: 12px; font-weight: 500; color: var(--text); }
+  .mini-type { font-size: 10px; color: var(--text3); }
+  .mini-pass { font-size: 10px; font-weight: 500; margin-top: 2px; }
+
+  /* TREND TABLE */
+  .trend-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .trend-table th { font-size: 10px; color: var(--text3); text-align: left; padding: .5rem .75rem; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: .05em; }
+  .trend-table td { padding: .6rem .75rem; border-bottom: 1px solid var(--border); color: var(--text); }
+  .trend-table tr:last-child td { border-bottom: none; }
+  .trend-table tr:hover td { background: var(--bg3); }
+
+  /* NAV TABS */
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    padding: .6rem 1.2rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: all .15s;
+    margin-bottom: -1px;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--text); border-bottom-color: var(--green); }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* CHANGED BADGE */
+  .changed-badge {
+    font-size: 9px;
+    padding: 1px 5px;
+    border-radius: 2px;
+    background: #2a2208;
+    color: var(--gold);
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); padding: 1rem 0; }
+    .header { padding: 1rem; }
+    .main { padding: 1rem; }
+    .header-left h1 { font-size: 1.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Oberrieden <span>→ Gotthard</span></h1>
+    <p>20-Wochen Trainingsplan · Mai – September 2026</p>
+  </div>
+  <div class="header-right">
+    <div class="stat-pill">
+      <div class="val">20</div>
+      <div class="lbl">Wochen</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val">2108m</div>
+      <div class="lbl">Gotthard</div>
+    </div>
+    <div class="stat-pill">
+      <div class="val" id="total-km">~900</div>
+      <div class="lbl">Total km</div>
+    </div>
+  </div>
+</div>
+
+<div class="progress-bar">
+  <span class="prog-label">Fortschritt</span>
+  <div class="prog-track">
+    <div class="prog-fill" id="prog-fill" style="width:8%"></div>
+  </div>
+  <span class="prog-pct" id="prog-pct">Woche 1 von 20</span>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section-label">Navigation</div>
+    <div style="padding: 0 .75rem; margin-bottom: .5rem;">
+      <button class="week-btn active" onclick="showSection('overview')">
+        <div class="week-dot" style="background:#4a9fd4"></div>
+        Übersicht
+      </button>
+      <button class="week-btn" onclick="showSection('trend')">
+        <div class="week-dot" style="background:#7ab648"></div>
+        Entwicklung
+      </button>
+    </div>
+
+    <div class="sidebar-section-label">Vorbereitungsphase · April</div>
+    <div style="padding: 0 .75rem;">
+      <button class="week-btn done" onclick="showWeek('pre')">
+        <div class="week-dot" style="background:#7ab648"></div>
+        Vorbereitungsphase
+        <span class="week-btn-meta">5 Akt.</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section-label">Phase 1 · Grundlage · Wo. 1–5</div>
+    <div style="padding: 0 .75rem;" id="phase1-nav"></div>
+
+    <div class="sidebar-section-label">Phase 2 · Ausdauer · Wo. 6–11</div>
+    <div style="padding: 0 .75rem;" id="phase2-nav"></div>
+
+    <div class="sidebar-section-label">Phase 3 · Spezifisch · Wo. 12–17</div>
+    <div style="padding: 0 .75rem;" id="phase3-nav"></div>
+
+    <div class="sidebar-section-label">Phase 4 · Tapering · Wo. 18–20</div>
+    <div style="padding: 0 .75rem;" id="phase4-nav"></div>
+
+    <div class="zone-legend">
+      <div class="zone-legend-title">Pulszonen (HFmax 183)</div>
+      <div class="zone-row"><div class="zone-dot" style="background:#555"></div> Z1 <div class="zone-range">&lt;110</div></div>
+      <div class="zone-row"><div class="zone-dot" style="background:#4a9fd4"></div> Z2 <div class="zone-range">110–137</div></div>
+      <div class="zone-row"><div class="zone-dot" style="background:#d4834a"></div> Z3 <div class="zone-range">138–155</div></div>
+      <div class="zone-row"><div class="zone-dot" style="background:#c4553a"></div> Z4 <div class="zone-range">156–173</div></div>
+      <div class="zone-row"><div class="zone-dot" style="background:#8b2020"></div> Z5 <div class="zone-range">174+</div></div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main" id="main-content">
+    <!-- content injected by JS -->
+  </main>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────────────────
+const typeColors = {
+  "Grundlage": "#7ab648",
+  "Ausdauer": "#4a9fd4",
+  "Spezifisch": "#c4553a",
+  "Tapering": "#6a6860",
+  "Regeneration": "#6a6860",
+  "EVENT": "#c4a93a"
+};
+
+const tagStyles = {
+  pendeln: { bg: '#1a3d54', color: '#4a9fd4' },
+  intervall: { bg: '#4a2e16', color: '#d4834a' },
+  lang: { bg: '#421a10', color: '#c4553a' },
+  rest: { bg: '#1a1a18', color: '#6a6860' },
+  pass: { bg: '#2a1a08', color: '#c4a93a' },
+  erh: { bg: '#1a2e10', color: '#7ab648' },
+};
+
+const phases = [
+  { id: 'phase1', label: 'Phase 1 – Grundlage', sub: 'Mai', color: '#7ab648', navId: 'phase1-nav',
+    weeks: [
+      { w:1, dates:'5.–11. Mai', h:4.5, type:'Grundlage', pass:'Buchenegg (NEU!)', status:'current', changed:true,
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag – kein Training'},
+          {d:'Di/Do',t:'pendeln',l:'Pendeln Z2',txt:'Oberrieden → Thalwil → Gattikon → Sihltal → Limmatplatz. Puls max. 137 bpm. ~20 km, ~300 Hm'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Gleiche Route, locker bleiben'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Buchenegg Ostrampe via Wildpark · ~65 km · ~900 Hm · Gravelbike empfohlen (40×51)'}
+        ],
+        tip:'Buchenegg: ab km 1.3 wird es richtig steil (10–12%). Früh genug runterschalten! Restaurant auf der Passhöhe samstags offen.',
+        pass_info: { name:'Buchenegg', hoehe:'786m', hm:'~480 Hm', laenge:'~4 km', steigung:'Ø 8%, max 12%', farbe:'#7ab648', breite:35 }
+      },
+      { w:2, dates:'12.–18. Mai', h:5, type:'Grundlage', pass:'Buchenegg + Hütten', changed:true,
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 4× 8 Min Sweetspot Z3 (Puls 138–155). Rückweg locker Z2'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker nach Intervall'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Buchenegg → Sihlbrugg → Hütten → Hüttnersee → Horgen. Erste 1000-Hm-Runde! ~75 km'}
+        ],
+        tip:'Statt Hirzel: ab Sihlbrugg Richtung Hütten – ruhige Nebenstrassen, schöner Hüttnersee, kaum Verkehr.',
+        pass_info: { name:'Buchenegg + Hütten', hoehe:'786m', hm:'~1000 Hm', laenge:'~75 km', steigung:'Mix', farbe:'#7ab648', breite:40 }
+      },
+      { w:3, dates:'19.–25. Mai', h:5, type:'Grundlage', pass:'Sihlsee-Vorbereitung', changed:true,
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 2× 12 Min Sweetspot Z3'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Sihlsee-Runde via Einsiedeln. ~80 km · ~800 Hm · Vorbereitung Sattelegg'}
+        ],
+        tip:'Sihlsee-Runde ist die perfekte Vorbereitung für den Sattelegg – ähnliches Profil, neue Gegend.'
+      },
+      { w:4, dates:'26. Mai–1. Jun', h:5, type:'Grundlage', pass:'Albis + Buchenegg', changed:true,
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 4× 8 Min Sweetspot Z3'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Albis → Buchenegg → Hütten Runde. ~75 km · ~1000 Hm'}
+        ],
+        tip:'Zweite 1000-Hm-Runde – Buchenegg wird sich leichter anfühlen als beim ersten Mal.'
+      },
+      { w:5, dates:'2.–8. Jun', h:3, type:'Regeneration', pass:'locker',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'erh',l:'Erholung',txt:'Pendeln nur wenn nötig – sonst ÖV. Beine schonen.'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z1',txt:'Sehr locker, Puls unter 120'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'1.5h lockere Albis-Runde, kein Druck'}
+        ],
+        tip:'REGENERATION: Körper adaptiert in der Erholung. Bewusst kürzer und lockerer – auch wenn es sich falsch anfühlt.'
+      }
+    ]
+  },
+  { id: 'phase2', label: 'Phase 2 – Ausdauer & Berge', sub: 'Jun–Jul', color: '#4a9fd4', navId: 'phase2-nav',
+    weeks: [
+      { w:6, dates:'9.–15. Jun', h:5, type:'Ausdauer', pass:'Sattelegg (NEU)',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 3× 10 Min Sweetspot Z3. Heim-Pendeln locker'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Zug → Wädenswil → Sattelegg → Sihlsee → zurück. ~80 km · ~900 Hm'}
+        ],
+        tip:'Sattelegg: ruhiger Pass, kaum Verkehr. Zug-Anreise spart Beine für den Anstieg.',
+        pass_info: { name:'Sattelegg', hoehe:'1190m', hm:'~620 Hm', laenge:'12 km', steigung:'Ø 5.5%', farbe:'#4a9fd4', breite:45 }
+      },
+      { w:7, dates:'16.–22. Jun', h:5.5, type:'Ausdauer', pass:'Sattelegg + Etzel',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 4× 10 Min Sweetspot Z3'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Sattelegg + Etzel Kombination. ~90 km · ~1100 Hm'}
+        ],
+        tip:'FTP-TEST diese Woche! 20 Min Vollgas flach → 95% = dein FTP. Ab dann Watt-Steuerung möglich.'
+      },
+      { w:8, dates:'23.–29. Jun', h:5.5, type:'Ausdauer', pass:'Ibergeregg (NEU)',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 2× 15 Min Schwelle Z4 (Puls 156–173)'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Nach Schwellen-Tag: max. 125 bpm'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Zug → Lachen → Sattelegg → Ibergeregg. ~95 km · ~1400 Hm'}
+        ],
+        tip:'Ibergeregg (7.5% Ø): steilster Pass bis jetzt. Tempo runter, Puls unter 155 halten.',
+        pass_info: { name:'Ibergeregg', hoehe:'1406m', hm:'~850 Hm', laenge:'11 km', steigung:'Ø 7.5%', farbe:'#4a9fd4', breite:58 }
+      },
+      { w:9, dates:'30. Jun–6. Jul', h:3, type:'Regeneration', pass:'locker',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'erh',l:'Erholung',txt:'Lockeres Pendeln oder ÖV'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z1',txt:'Sehr locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'1.5h lockere Runde Albis'}
+        ],
+        tip:'REGENERATION – du hast jetzt 1400-Hm-Tage in den Beinen. Der Körper braucht diese Pause.'
+      },
+      { w:10, dates:'7.–13. Jul', h:5.5, type:'Ausdauer', pass:'Ibergeregg 2×',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 3× 12 Min Sweetspot Z3'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Normal'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Sattelegg + Ibergeregg. ~100 km · ~1500 Hm · Erste 100-km-Runde!'}
+        ],
+        tip:'Erste 100-km-Runde! Verpflegung: 1 Gel/Riegel pro Stunde ab Stunde 2. Sponser Isotonic im Bidon.'
+      },
+      { w:11, dates:'14.–20. Jul', h:5.5, type:'Ausdauer', pass:'Pragelpass (NEU)',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 2× 20 Min Sweetspot/Schwelle Z3/Z4'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Zug → Glarus → Pragelpass Ostseite. Am WE autofrei! ~85 km · ~1400 Hm'}
+        ],
+        tip:'Pragelpass am Wochenende autofrei – Rennradparadies! Früh starten.',
+        pass_info: { name:'Pragelpass (Ostseite)', hoehe:'1548m', hm:'~1100 Hm', laenge:'21 km', steigung:'Ø 5.5%, max 18%', farbe:'#4a9fd4', breite:72 }
+      }
+    ]
+  },
+  { id: 'phase3', label: 'Phase 3 – Spezifisch', sub: 'Jul–Aug', color: '#c4553a', navId: 'phase3-nav',
+    weeks: [
+      { w:12, dates:'21.–27. Jul', h:5.5, type:'Spezifisch', pass:'Pragelpass Westseite',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'5× Albis-Anstieg Z4 – Bergwiederholungen'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Pragelpass Westseite ab Muotathal – bis 18%! Ziel: ankommen, nicht Tempo.'}
+        ],
+        tip:'Pragelpass Westseite: Ziel ist Erfahrung sammeln. Sehr langsam angehen – ab 14% wirklich runterschalten.'
+      },
+      { w:13, dates:'28. Jul–3. Aug', h:3.5, type:'Regeneration', pass:'locker',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'erh',l:'Erholung',txt:'Lockeres Pendeln'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z1',txt:'Sehr locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'2h lockere Runde Albis/Buchenegg'}
+        ],
+        tip:'REGENERATION nach Pragelpass Westseite – verdient!'
+      },
+      { w:14, dates:'4.–10. Aug', h:5.5, type:'Spezifisch', pass:'Klausenpass (NEU)',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 2× 20 Min Schwelle Z4'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Zug → Altdorf → Klausenpass (25 km, 1500 Hm) → Linthal → Zug ab Glarus'}
+        ],
+        tip:'Klausenpass: erste grosse Alpenpassfahrt! Ab Unterschächen (km 13) wird es anspruchsvoller.',
+        pass_info: { name:'Klausenpass', hoehe:'1948m', hm:'~1500 Hm', laenge:'25 km', steigung:'Ø 6.1%', farbe:'#c4553a', breite:84 }
+      },
+      { w:15, dates:'11.–17. Aug', h:5.5, type:'Spezifisch', pass:'Klausenpass (Wdh.)',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'Kurze harte Bergwiederholungen Z4/Z5'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'Klausenpass nochmals – diesmal flüssiger! Tempo vergleichen.'}
+        ],
+        tip:'Zweiter Klausenpass: du wirst merken wie viel besser es geht. Das ist Bestätigung dass der Plan funktioniert.'
+      },
+      { w:16, dates:'18.–24. Aug', h:5.5, type:'Spezifisch', pass:'Granfondo San Gottardo',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'intervall',l:'Intervall',txt:'1h: 3× 15 Min Sweetspot Z3'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'pass',l:'RENNEN!',txt:'Granfondo San Gottardo – kurze Strecke 52 km / 1490 Hm. Zeitmessung Tremola!'}
+        ],
+        tip:'Granfondo San Gottardo 23. Aug – jetzt anmelden! granfondosangottardo.com · Kurze Strecke passt perfekt.'
+      },
+      { w:17, dates:'25.–31. Aug', h:3.5, type:'Regeneration', pass:'locker',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'erh',l:'Erholung',txt:'Lockeres Pendeln oder ÖV'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z1',txt:'Sehr locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'2h lockere Runde, Beine ausschütteln'}
+        ],
+        tip:'REGENERATION – Tapering beginnt jetzt. Letzter grosser Block ist geschafft!'
+      }
+    ]
+  },
+  { id: 'phase4', label: 'Phase 4 – Tapering', sub: 'Sep', color: '#6a6860', navId: 'phase4-nav',
+    weeks: [
+      { w:18, dates:'1.–7. Sep', h:4, type:'Tapering', pass:'Albis locker',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'pendeln',l:'Pendeln Z2',txt:'Locker, Puls unter 130'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z2',txt:'Locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'2.5h: Lockere Albis-Runde, 2× 5 Min Z3-Impulse, sonst Z2'}
+        ],
+        tip:'Tapering: Umfang runter, kurze Impulse halten Beine wach. Fühlt sich zu wenig an – ist richtig so.'
+      },
+      { w:19, dates:'8.–14. Sep', h:2.5, type:'Tapering', pass:'sehr locker',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Kids-Tag'},
+          {d:'Di/Do',t:'pendeln',l:'Pendeln Z1',txt:'Sehr locker, Puls unter 125'},
+          {d:'Mi',t:'pendeln',l:'Pendeln Z1',txt:'Sehr locker'},
+          {d:'Sa',t:'lang',l:'Samstag',txt:'1h Einrollen, 3× 5 Min Z3-Impulse, ausrollen'}
+        ],
+        tip:'Schwere Beine = normal! Kein Fitnessverlust – der Körper tankt auf. Ausruhen, schlafen, gut essen.'
+      },
+      { w:20, dates:'15.–21. Sep', h:2, type:'EVENT', pass:'🏔 GOTTHARD!',
+        days:[
+          {d:'Mo',t:'rest',l:'Rest',txt:'Ausrüstung checken, gut schlafen, viel essen'},
+          {d:'Di',t:'erh',l:'Einrollen',txt:'20–30 Min sehr locker, Beine aktivieren'},
+          {d:'Mi',t:'rest',l:'Rest',txt:'Rad putzen, Tasche packen, Streckenprofil studieren'},
+          {d:'Do',t:'rest',l:'Rest',txt:'Reise nach Göschenen – früh ankommen, gut schlafen'},
+          {d:'Sa/So',t:'pass',l:'GOTTHARD!',txt:'Tremola ab Göschenen: 13 km · 1100 Hm · 24 Spitzkehren · Puls 110–155 · GENIESSE ES! 🏔'}
+        ],
+        tip:'Strategie: km 0–5 Puls max. 145 · km 5–10 bis 155 · km 10–13 bis 165. Du schaffst das – 20 Wochen Arbeit zahlen sich aus!',
+        pass_info: { name:'Gotthard via Tremola', hoehe:'2108m', hm:'~1100 Hm', laenge:'13 km', steigung:'Ø 8.5%, 24 Kehren', farbe:'#c4a93a', breite:100 }
+      }
+    ]
+  }
+];
+
+const activities = [
+  { date:'10. Mai', name:'Buchenegg Ostrampe', km:30.5, hm:841, hr_avg:139, hr_max:174, z2:45, z3:31, z4:20, note:'Erster neuer Pass! Kontrolliert Z3 auf dem Anstieg.' },
+  { date:'8. Mai', name:'Seerunde Fähre Horgen–Meilen', km:47.6, hm:315, hr_avg:136, hr_max:161, z2:52, z3:45, z4:1, note:'Cardiac Drift +4.7 bpm – gute aerobe Effizienz.' },
+  { date:'7. Mai', name:'Gravel Pendeln hin+zurück', km:38.6, hm:515, hr_avg:131, hr_max:164, z2:76, z3:22, z4:2, note:'82% Z2 Hinweg – beste Gravel-Pendelfahrt.' },
+  { date:'1. Mai', name:'Albis 2× Intervall – Tierpark Kehrt', km:25.5, hm:783, hr_avg:142, hr_max:175, z2:32, z3:44, z4:20, note:'Sauberer Z4-Reiz ab Tierpark.' },
+  { date:'28. Apr', name:'Pendeln Rennrad hin+zurück', km:44.5, hm:595, hr_avg:130, hr_max:150, z2:69, z3:28, z4:0, note:'79% Z2 – beste Rennrad-Pendelfahrt.' },
+  { date:'26. Apr', name:'Albis 2× + Forststrasse Sihlwald', km:30.4, hm:951, hr_avg:147, hr_max:182, z2:19, z3:46, z4:33, note:'2× PR (Albis Interval + Forststrasse Horgen).' },
+];
+
+const trendData = [
+  { date:'24. Mär', fahrt:'Gravel', hr:154, z2:5, hm:166, note:'vor Plan' },
+  { date:'16. Apr', fahrt:'Nachmittag', hr:153, z2:6, hm:535, note:'vor Plan' },
+  { date:'18. Apr', fahrt:'Morgen lang', hr:150, z2:5, hm:392, note:'vor Plan' },
+  { date:'23. Apr', fahrt:'Pendeln Z2', hr:126, z2:90, hm:128, note:'Speiche kaputt' },
+  { date:'26. Apr', fahrt:'Albis 2× PR', hr:147, z2:19, hm:951, note:'2× PR 🏆' },
+  { date:'28. Apr', fahrt:'Pendeln Rennrad', hr:130, z2:79, hm:595, note:'bestes Pendeln' },
+  { date:'29. Apr', fahrt:'Pendeln Gravel', hr:134, z2:57, hm:515, note:'Gravel +4 bpm' },
+  { date:'1. Mai', fahrt:'Albis Intervall', hr:142, z2:32, hm:783, note:'Z4 Tierpark' },
+  { date:'7. Mai', fahrt:'Pendeln Gravel', hr:131, z2:76, hm:515, note:'Cardiac +4.7' },
+  { date:'8. Mai', fahrt:'Seerunde', hr:136, z2:52, hm:315, note:'Cardiac +4.7' },
+  { date:'10. Mai', fahrt:'Buchenegg', hr:139, z2:45, hm:841, note:'Neuer Pass! 🏔' },
+];
+
+// ─── BUILD NAV ────────────────────────────────────────────────────────────────
+function buildNav() {
+  phases.forEach(ph => {
+    const nav = document.getElementById(ph.navId);
+    ph.weeks.forEach(wk => {
+      const isCurrent = wk.status === 'current';
+      const isDone = false;
+      const btn = document.createElement('button');
+      btn.className = `week-btn${isCurrent ? ' current' : ''}${isDone ? ' done' : ''}`;
+      btn.id = `nav-w${wk.w}`;
+      btn.innerHTML = `
+        <div class="week-dot" style="background:${isCurrent ? ph.color : (isDone ? '#7ab648' : '#2a2a26')}"></div>
+        Woche ${wk.w}
+        <span class="week-btn-meta">${wk.h}h</span>
+      `;
+      btn.onclick = () => showWeek(`w${wk.w}`);
+      nav.appendChild(btn);
+    });
+  });
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+let currentSection = 'overview';
+
+function showSection(id) {
+  currentSection = id;
+  document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+
+  const main = document.getElementById('main-content');
+  if (id === 'overview') {
+    renderOverview();
+  } else if (id === 'trend') {
+    renderTrend();
+  } else if (id === 'pre') {
+    renderPre();
+  }
+}
+
+function showWeek(id) {
+  currentSection = id;
+  document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+  const navBtn = document.getElementById(`nav-${id}`);
+  if (navBtn) navBtn.classList.add('active');
+
+  if (id === 'pre') { renderPre(); return; }
+
+  const wNum = parseInt(id.replace('w', ''));
+  let week = null;
+  phases.forEach(ph => {
+    ph.weeks.forEach(wk => { if (wk.w === wNum) week = { wk, ph }; });
+  });
+  if (week) renderWeek(week.wk, week.ph);
+}
+
+function tagStyle(t) {
+  const s = tagStyles[t] || tagStyles.rest;
+  return `background:${s.bg};color:${s.color}`;
+}
+
+function badgeClass(type) {
+  const map = { 'Grundlage':'badge-green', 'Ausdauer':'badge-blue', 'Spezifisch':'badge-red', 'Tapering':'badge-gray', 'Regeneration':'badge-gray', 'EVENT':'badge-gold' };
+  return map[type] || 'badge-gray';
+}
+
+function renderWeek(wk, ph) {
+  const col = typeColors[wk.type] || '#6a6860';
+  const passHtml = wk.pass_info ? `
+    <div class="pass-box" style="border-color:${wk.pass_info.farbe}22">
+      <div class="pass-name">🏔 ${wk.pass_info.name}</div>
+      <div class="pass-stats">
+        <div class="pass-stat">Höhe <span>${wk.pass_info.hoehe}</span></div>
+        <div class="pass-stat">Hm <span>${wk.pass_info.hm}</span></div>
+        <div class="pass-stat">Länge <span>${wk.pass_info.laenge}</span></div>
+        <div class="pass-stat">Steigung <span>${wk.pass_info.steigung}</span></div>
+      </div>
+      <div class="pass-bar-wrap">
+        <div class="pass-bar-bg"><div class="pass-bar-fill" style="width:${wk.pass_info.breite}%;background:${wk.pass_info.farbe}"></div></div>
+      </div>
+    </div>` : '';
+
+  const daysHtml = wk.days.map(d => `
+    <div class="day-row">
+      <div class="day-label">${d.d}</div>
+      <div class="day-content">
+        <span class="day-tag" style="${tagStyle(d.t)}">${d.l}</span>
+        ${d.txt}
+      </div>
+    </div>`).join('');
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="week-header">
+      <div class="week-header-top">
+        <div>
+          <div class="week-title">Woche ${wk.w}${wk.changed ? '<span class="changed-badge">angepasst</span>' : ''}</div>
+          <div class="week-meta">${wk.dates} · ${ph.label}</div>
+        </div>
+        <div class="week-badges">
+          <span class="badge ${badgeClass(wk.type)}">${wk.type}</span>
+          <span class="badge badge-gray">${wk.pass}</span>
+        </div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-box-val" style="color:${col}">${wk.h}h</div><div class="stat-box-lbl">Trainingszeit</div></div>
+      <div class="stat-box"><div class="stat-box-val">${wk.w}</div><div class="stat-box-lbl">Woche von 20</div></div>
+      <div class="stat-box"><div class="stat-box-val">${20-wk.w}</div><div class="stat-box-lbl">Wochen bis Gotthard</div></div>
+    </div>
+    ${passHtml}
+    <div class="schedule">${daysHtml}</div>
+    <div class="tip-box">${wk.tip}</div>
+  `;
+}
+
+function renderOverview() {
+  let html = `
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('plan', this)">Plan</button>
+      <button class="nav-tab" onclick="switchTab('akt', this)">Aktivitäten</button>
+    </div>
+    <div id="tab-plan" class="tab-panel active">
+      <div class="phase-group">
+        <div class="phase-group-label">Vorbereitungsphase · April 2026 · abgeschlossen</div>
+        <div class="overview-grid">
+          ${['24. Mär','16. Apr','18. Apr','23. Apr','26. Apr'].map((d,i) => `
+            <div class="mini-card done" onclick="showSection('pre')">
+              <div class="mini-wnum">${d}</div>
+              <div class="mini-bar-bg"><div class="mini-bar" style="width:100%;background:#3a5a1f"></div></div>
+              <div class="mini-h" style="color:#7ab648">✓</div>
+              <div class="mini-type" style="color:#7ab648">Absolviert</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+
+  phases.forEach(ph => {
+    html += `<div class="phase-group">
+      <div class="phase-group-label">${ph.label} · ${ph.sub}</div>
+      <div class="overview-grid">`;
+    ph.weeks.forEach(wk => {
+      const col = typeColors[wk.type] || '#6a6860';
+      const bw = Math.round(wk.h/5.5*100);
+      const isCurrent = wk.status === 'current';
+      html += `
+        <div class="mini-card${isCurrent ? ' current' : ''}" onclick="showWeek('w${wk.w}')">
+          <div class="mini-wnum">Wo. ${wk.w}</div>
+          <div class="mini-dates">${wk.dates}</div>
+          <div class="mini-bar-bg"><div class="mini-bar" style="width:${bw}%;background:${col}"></div></div>
+          <div class="mini-h">${wk.h}h</div>
+          <div class="mini-type">${wk.type}</div>
+          <div class="mini-pass" style="color:${col}">${wk.pass}</div>
+        </div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  html += `</div>
+    <div id="tab-akt" class="tab-panel">
+      <div class="act-title">Bisherige Aktivitäten · ${activities.length} Fahrten</div>`;
+
+  activities.forEach(a => {
+    html += `
+      <div class="act-card">
+        <div>
+          <div class="act-name">${a.name}</div>
+          <div class="act-meta">${a.date}</div>
+          <div class="act-stats-row">
+            <span class="act-stat"><b>${a.km} km</b></span>
+            <span class="act-stat"><b>${a.hm} Hm</b></span>
+            <span class="act-stat">Ø HR <b>${a.hr_avg}</b></span>
+            <span class="act-stat">Max <b>${a.hr_max}</b></span>
+          </div>
+          <div class="zbar">
+            <div style="width:${a.z2}%;background:#1a3d54"></div>
+            <div style="width:${a.z3}%;background:#4a2e16"></div>
+            <div style="width:${a.z4}%;background:#421a10"></div>
+          </div>
+          <div class="act-meta" style="margin-top:4px">${a.note}</div>
+        </div>
+        <div>
+          <span class="act-badge" style="background:#1a3d54;color:#4a9fd4">${a.z2}% Z2</span>
+        </div>
+      </div>`;
+  });
+
+  html += `</div>`;
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function renderTrend() {
+  let rows = trendData.map(t => {
+    const z2color = t.z2 >= 70 ? '#7ab648' : t.z2 >= 40 ? '#d4834a' : '#c4553a';
+    return `<tr>
+      <td>${t.date}</td>
+      <td>${t.fahrt}</td>
+      <td>${t.hr}</td>
+      <td style="color:${z2color};font-weight:500">${t.z2}%</td>
+      <td>${t.hm}</td>
+      <td style="color:var(--text2)">${t.note}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('main-content').innerHTML = `
+    <div class="week-header">
+      <div class="week-title">Entwicklung</div>
+      <div class="week-meta">Z2-Anteil · Ø Puls · Höhenmeter über Zeit</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-box-val" style="color:#7ab648">5%→82%</div><div class="stat-box-lbl">Z2 Entwicklung</div></div>
+      <div class="stat-box"><div class="stat-box-val" style="color:#4a9fd4">154→131</div><div class="stat-box-lbl">Ø HR Pendeln</div></div>
+      <div class="stat-box"><div class="stat-box-val">11</div><div class="stat-box-lbl">Aktivitäten</div></div>
+      <div class="stat-box"><div class="stat-box-val" style="color:#c4553a">841</div><div class="stat-box-lbl">Max Hm/Tag</div></div>
+    </div>
+    <table class="trend-table">
+      <thead><tr><th>Datum</th><th>Fahrt</th><th>Ø HR</th><th>Z2</th><th>Hm</th><th>Notiz</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function renderPre() {
+  document.getElementById('main-content').innerHTML = `
+    <div class="week-header">
+      <div class="week-title">Vorbereitungsphase</div>
+      <div class="week-meta">April 2026 · 5 Aktivitäten · Planstart 5. Mai</div>
+    </div>
+    <div class="tip-box">5 Aktivitäten absolviert · Z2 von 5% → 82% entwickelt · Albis 2× gemeistert · 2× PR aufgestellt. Du bist bereit.</div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-box-val" style="color:#7ab648">5</div><div class="stat-box-lbl">Aktivitäten</div></div>
+      <div class="stat-box"><div class="stat-box-val" style="color:#7ab648">82%</div><div class="stat-box-lbl">Max Z2-Anteil</div></div>
+      <div class="stat-box"><div class="stat-box-val">951</div><div class="stat-box-lbl">Max Hm/Tag</div></div>
+      <div class="stat-box"><div class="stat-box-val" style="color:#c4a93a">2× PR</div><div class="stat-box-lbl">Strava PRs</div></div>
+    </div>
+    ${activities.slice(1).map(a => `
+      <div class="act-card">
+        <div>
+          <div class="act-name">${a.name}</div>
+          <div class="act-meta">${a.date}</div>
+          <div class="act-stats-row">
+            <span class="act-stat"><b>${a.km} km</b></span>
+            <span class="act-stat"><b>${a.hm} Hm</b></span>
+            <span class="act-stat">Ø HR <b>${a.hr_avg}</b></span>
+            <span class="act-stat">Max <b>${a.hr_max}</b></span>
+          </div>
+          <div class="zbar">
+            <div style="width:${a.z2}%;background:#1a3d54"></div>
+            <div style="width:${a.z3}%;background:#4a2e16"></div>
+            <div style="width:${a.z4}%;background:#421a10"></div>
+          </div>
+          <div class="act-meta" style="margin-top:4px">${a.note}</div>
+        </div>
+      </div>`).join('')}
+  `;
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+buildNav();
+renderOverview();
+
+// Open current week by default
+setTimeout(() => showWeek('w1'), 100);
+</script>
+</body>
+</html>
